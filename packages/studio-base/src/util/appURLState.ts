@@ -12,6 +12,7 @@ export type AppURLState = {
   ds?: string;
   dsParams?: Record<string, string>;
   layoutId?: LayoutID;
+  layoutURL?: URL;
   time?: Time;
 };
 
@@ -30,6 +31,10 @@ export function encodeAppURLState(url: URL, urlState: AppURLState): URL {
 
   if (urlState.layoutId) {
     newURL.searchParams.set("layoutId", urlState.layoutId);
+  }
+
+  if (urlState.layoutURL) {
+    newURL.searchParams.set("layoutURL", urlState.layoutURL.href);
   }
 
   if (urlState.time) {
@@ -61,6 +66,7 @@ export function parseAppURLState(url: URL): AppURLState | undefined {
   }
 
   const ds = url.searchParams.get("ds") ?? undefined;
+  const layoutURL = url.searchParams.get("layoutURL") ?? undefined;
   const layoutId = url.searchParams.get("layoutId");
   const timeString = url.searchParams.get("time");
   const time = timeString == undefined ? undefined : fromRFC3339String(timeString);
@@ -75,8 +81,9 @@ export function parseAppURLState(url: URL): AppURLState | undefined {
   const state: AppURLState = omitBy(
     {
       layoutId: layoutId ? (layoutId as LayoutID) : undefined,
+      layoutURL: layoutURL ? new URL(layoutURL, window.location.href) : undefined,
       time,
-      ds,
+      ds: ds ?? undefined,
       dsParams: isEmpty(dsParams) ? undefined : dsParams,
     },
     isEmpty,

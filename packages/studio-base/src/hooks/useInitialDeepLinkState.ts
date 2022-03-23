@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import { useEffect, useRef } from "react";
+import { useToasts } from "react-toast-notifications";
 
 import Log from "@foxglove/log";
 import { AppSetting } from "@foxglove/studio-base/AppSetting";
@@ -11,7 +12,10 @@ import {
   useMessagePipeline,
 } from "@foxglove/studio-base/components/MessagePipeline";
 import { useCurrentLayoutActions } from "@foxglove/studio-base/context/CurrentLayoutContext";
+import { PanelsState } from "@foxglove/studio-base/context/CurrentLayoutContext/actions";
+import { useLayoutManager } from "@foxglove/studio-base/context/LayoutManagerContext";
 import { usePlayerSelection } from "@foxglove/studio-base/context/PlayerSelectionContext";
+import useCallbackWithToast from "@foxglove/studio-base/hooks/useCallbackWithToast";
 import useDeepMemo from "@foxglove/studio-base/hooks/useDeepMemo";
 import { useSessionStorageValue } from "@foxglove/studio-base/hooks/useSessionStorageValue";
 import { AppURLState, parseAppURLState } from "@foxglove/studio-base/util/appURLState";
@@ -29,6 +33,8 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
   const stableUrlState = useDeepMemo(useMessagePipeline(selectUrlState));
   const { selectSource } = usePlayerSelection();
   const { setSelectedLayoutId } = useCurrentLayoutActions();
+  const layoutManager = useLayoutManager();
+  const { addToast } = useToasts();
   const [launchPreference, setLaunchPreference] = useSessionStorageValue(
     AppSetting.LAUNCH_PREFERENCE,
   );
@@ -61,6 +67,33 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
     }
   }, [launchPreference, setLaunchPreference, stableUrlState]);
 
+  const loadLayoutFromURL = useCallbackWithToast(async () => {
+    const url = appUrlRef.current!.layoutURL!;
+    const name = url.pathname.replace(/.*\//, '')
+    log.debug(`Trying to load layout ${name} from ${url}`);
+    let res;
+    try {
+      res = await fetch(url.href);
+    } catch {
+      addToast(`Could not load the layout from ${url}`, { appearance: "error" });
+      return;
+    }
+    const parsedState: unknown = JSON.parse(await res.text());
+
+    if (typeof parsedState !== "object" || !parsedState) {
+      addToast(`${url} does not contain valid layout JSON`, { appearance: "error" });
+      return;
+    }
+
+    const data = parsedState as PanelsState
+    const newLayout = await layoutManager.saveNewLayout({
+      name,
+      data,
+      permission: "CREATOR_WRITE",
+    });
+    setSelectedLayoutId(newLayout.id);
+  }, [layoutManager, setSelectedLayoutId, addToast]);
+
   useEffect(() => {
     const urlState = appUrlRef.current;
     if (!urlState) {
@@ -82,7 +115,11 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
       setSelectedLayoutId(urlState.layoutId);
       urlState.layoutId = undefined;
     }
-  }, [selectSource, setSelectedLayoutId]);
+
+    if (urlState.layoutURL != undefined) {
+      void loadLayoutFromURL();
+    }
+  }, [selectSource, setSelectedLayoutId, loadLayoutFromURL]);
 
   useEffect(() => {
     const urlState = appUrlRef.current;

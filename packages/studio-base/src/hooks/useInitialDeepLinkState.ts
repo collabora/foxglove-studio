@@ -69,7 +69,7 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
 
   const loadLayoutFromURL = useCallbackWithToast(async () => {
     const url = appUrlRef.current!.layoutURL!;
-    const name = url.pathname.replace(/.*\//, '')
+    const name = url.pathname.replace(/.*\//, "");
     log.debug(`Trying to load layout ${name} from ${url}`);
     let res;
     try {
@@ -85,7 +85,7 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
       return;
     }
 
-    const data = parsedState as PanelsState
+    const data = parsedState as PanelsState;
     const newLayout = await layoutManager.saveNewLayout({
       name,
       data,

@@ -69,11 +69,12 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
 
   const loadLayoutFromURL = useCallbackWithToast(async () => {
     const url = appUrlRef.current!.layoutURL!;
-    const name = url.pathname.replace(/.*\//, "");
+    const name = new URL(url).pathname.replace(/.*\//, "");
+
     log.debug(`Trying to load layout ${name} from ${url}`);
     let res;
     try {
-      res = await fetch(url.href);
+      res = await fetch(url);
     } catch {
       addToast(`Could not load the layout from ${url}`, { appearance: "error" });
       return;

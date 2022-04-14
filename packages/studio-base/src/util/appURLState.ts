@@ -12,7 +12,7 @@ export type AppURLState = {
   ds?: string;
   dsParams?: Record<string, string>;
   layoutId?: LayoutID;
-  layoutURL?: URL;
+  layoutURL?: string;
   time?: Time;
 };
 
@@ -34,7 +34,7 @@ export function encodeAppURLState(url: URL, urlState: AppURLState): URL {
   }
 
   if (urlState.layoutURL) {
-    newURL.searchParams.set("layoutURL", urlState.layoutURL.href);
+    newURL.searchParams.set("layoutURL", urlState.layoutURL);
   }
 
   if (urlState.time) {
@@ -81,7 +81,7 @@ export function parseAppURLState(url: URL): AppURLState | undefined {
   const state: AppURLState = omitBy(
     {
       layoutId: layoutId ? (layoutId as LayoutID) : undefined,
-      layoutURL: layoutURL ? new URL(layoutURL, window.location.href) : undefined,
+      layoutURL: layoutURL ? new URL(layoutURL, window.location.href).href : undefined,
       time,
       ds: ds ?? undefined,
       dsParams: isEmpty(dsParams) ? undefined : dsParams,

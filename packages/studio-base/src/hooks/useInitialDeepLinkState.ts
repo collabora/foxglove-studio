@@ -71,6 +71,12 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
     const url = appUrlRef.current!.layoutURL!;
     const name = new URL(url).pathname.replace(/.*\//, "");
 
+    const layout = (await layoutManager.getLayouts()).find((l) => l.name === name);
+    if (layout != undefined) {
+      log.debug(`Found existing layout named ${name}: `, layout);
+      return setSelectedLayoutId(layout.id);
+    }
+
     log.debug(`Trying to load layout ${name} from ${url}`);
     let res;
     try {
@@ -117,7 +123,9 @@ export function useInitialDeepLinkState(deepLinks: string[]): void {
       urlState.layoutId = undefined;
     }
 
+    // Fetch the layout from a given URL (unless we already have one with the same name)
     if (urlState.layoutURL != undefined) {
+      log.debug(`Downloading layout from URL: ${urlState.layoutURL}`);
       void loadLayoutFromURL();
     }
   }, [selectSource, setSelectedLayoutId, loadLayoutFromURL]);

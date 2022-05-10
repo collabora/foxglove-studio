@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [jpc/layoutURL-deeplinking]
+    branches: [jpc/layoutURL-deeplinking, jpc/static-demo]
   pull_request:
 
 jobs:
@@ -178,3 +178,36 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  gitlab-pages:
+    name: Deploy to GitLab pages
+    runs-on: ubuntu-20.04
+    # needs: test
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout jpc/static-demo
+        uses: actions/checkout@v2
+        with:
+          ref: jpc/static-demo
+          lfs: true
+
+      - run: yarn install --immutable
+
+      - name: Build the app
+        run: yarn run web:build:prod
+
+      - name: Upload to GitLab Pages
+        run: |
+          cp carlafox_subset.bag web/.webpack
+          cd web/.webpack
+          git init -b main .
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git lfs track '*.bag'
+          git add .
+          git commit -m 'compiled app'
+          git remote add origin https://bot:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.collabora.com/jpc/rosbag-test.git
+          git push -f -u origin main

@@ -51,17 +51,11 @@ const CONTACT_ITEMS = [
 ];
 
 export type IStartProps = {
-  supportedLocalFileExtensions?: string[];
-  supportedRemoteFileExtensions?: string[];
   onSelectView: (newValue: OpenDialogViews) => void;
 };
 
 export default function Start(props: IStartProps): JSX.Element {
-  const {
-    supportedLocalFileExtensions = [],
-    supportedRemoteFileExtensions = [],
-    onSelectView,
-  } = props;
+  const { onSelectView } = props;
   const theme = useTheme();
   const { recentSources, selectRecent } = usePlayerSelection();
 
@@ -96,44 +90,25 @@ export default function Start(props: IStartProps): JSX.Element {
   );
 
   const startItems: IButtonProps[] = useMemo(() => {
-    const formatter = new Intl.ListFormat("en-US", { style: "long" });
-    const supportedLocalFiles = formatter.format(
-      Array.from(new Set(supportedLocalFileExtensions)).sort(),
-    );
-    const supportedRemoteFiles = formatter.format(
-      Array.from(new Set(supportedRemoteFileExtensions)).sort(),
-    );
     return [
       {
-        id: "open-local-file",
-        children: "Open local file",
-        secondaryText: `Supports ${supportedLocalFiles} files.`,
-        iconProps: { iconName: "OpenFile" },
-        onClick: () => onSelectView("file"),
-      },
-      {
-        id: "open-url",
-        children: "Open file from URL",
-        secondaryText: `Load a file via HTTP(S).\nSupports ${supportedRemoteFiles} files.`,
-        iconProps: { iconName: "FileASPX" },
-        onClick: () => onSelectView("remote"),
-      },
-      {
-        id: "open-connection",
-        children: "Open connection",
-        secondaryText: "Connect to a live robot or server.",
-        iconProps: { iconName: "Flow" },
-        onClick: () => onSelectView("connection"),
-      },
-      {
         id: "sample-data",
-        children: "Explore sample data",
-        secondaryText: "New to Foxglove Studio? Start here!",
+        children: "Wondering what CARLAFox is? Start here!",
+        secondaryText: "Explore pre-recorded data",
         iconProps: { iconName: "BookStar" },
         onClick: () => onSelectView("demo"),
       },
+      {
+        id: "live-demo",
+        children: "Want to dive deeper and reprogram the simulation?",
+        secondaryText: "Explore a live CARLAFox demo",
+        iconProps: { iconName: "BookPulse" },
+        onClick: () => {
+          window.location.href = "http://viking.kurg.org:8080/";
+        },
+      },
     ];
-  }, [onSelectView, supportedLocalFileExtensions, supportedRemoteFileExtensions]);
+  }, [onSelectView]);
 
   const recentItems: IButtonProps[] = useMemo(() => {
     return recentSources.map((recent) => {

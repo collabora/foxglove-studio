@@ -25,6 +25,7 @@ declare global {
     | "Blockhead"
     | "BlockheadFilled"
     | "BookStar"
+    | "BookPulse"
     | "Braces"
     | "BracesFilled"
     | "Bug"

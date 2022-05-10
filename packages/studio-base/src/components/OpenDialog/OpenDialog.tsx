@@ -72,21 +72,11 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
     });
   }, [availableSources]);
 
-  const localFileSources = useMemo(() => {
-    return availableSources.filter((source) => source.type === "file");
-  }, [availableSources]);
-
   const remoteFileSources = useMemo(() => {
     return availableSources.filter((source) => source.type === "remote-file");
   }, [availableSources]);
 
   const view = useMemo(() => {
-    const supportedLocalFileTypes = localFileSources.flatMap(
-      (source) => source.supportedFileTypes ?? [],
-    );
-    const supportedRemoteFileTypes = remoteFileSources.flatMap(
-      (source) => source.supportedFileTypes ?? [],
-    );
     switch (activeView) {
       case "demo": {
         return {
@@ -120,24 +110,10 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
       default:
         return {
           title: "Get started",
-          component: (
-            <Start
-              onSelectView={onSelectView}
-              supportedLocalFileExtensions={supportedLocalFileTypes}
-              supportedRemoteFileExtensions={supportedRemoteFileTypes}
-            />
-          ),
+          component: <Start onSelectView={onSelectView} />,
         };
     }
-  }, [
-    activeDataSource,
-    activeView,
-    connectionSources,
-    localFileSources,
-    onDismiss,
-    onSelectView,
-    remoteFileSources,
-  ]);
+  }, [activeDataSource, activeView, connectionSources, onDismiss, onSelectView, remoteFileSources]);
 
   return (
     <Dialog

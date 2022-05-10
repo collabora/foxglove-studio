@@ -15,7 +15,7 @@ import {
   FoxgloveWebSocketDataSourceFactory,
   UlogLocalDataSourceFactory,
   McapLocalDataSourceFactory,
-  SampleNuscenesDataSourceFactory,
+  SampleCarlafoxDataSourceFactory,
   IAppConfiguration,
   McapRemoteDataSourceFactory,
   App,
@@ -49,7 +49,7 @@ export function Root({ appConfiguration }: { appConfiguration: IAppConfiguration
       new FoxgloveDataPlatformDataSourceFactory({
         useIterablePlayer: enableExperimentalDataPlatformPlayer,
       }),
-      new SampleNuscenesDataSourceFactory({ useIterablePlayer: enableExperimentalBagPlayer }),
+      new SampleCarlafoxDataSourceFactory({ useIterablePlayer: enableExperimentalBagPlayer }),
       new McapLocalDataSourceFactory(),
       new McapRemoteDataSourceFactory(),
     ];

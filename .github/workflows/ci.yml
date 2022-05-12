@@ -202,6 +202,7 @@ jobs:
       - name: Upload to GitLab Pages
         run: |
           cp carlafox_subset.bag web/.webpack
+          cp pages-gitlab-ci.yml web/.webpack/.gitlab-ci.yml
           cd web/.webpack
           git init -b main .
           git config user.name "GitHub Actions Bot"

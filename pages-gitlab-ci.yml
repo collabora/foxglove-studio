@@ -1,0 +1,17 @@
+# needed for HTTP Range support (see https://gitlab.com/gitlab-org/gitlab-pages/-/issues/519)
+variables:
+  ARTIFACT_COMPRESSION_LEVEL: "fastest"
+  FF_USE_FASTZIP: 1
+
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - mv * .public
+    - rm -rf public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

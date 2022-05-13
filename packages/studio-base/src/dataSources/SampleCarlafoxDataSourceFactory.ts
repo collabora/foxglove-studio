@@ -37,7 +37,7 @@ class SampleCarlafoxDataSourceFactory implements IDataSourceFactory {
       return new IterablePlayer({
         source: bagSource,
         isSampleDataSource: true,
-        name: "Created using the CARLA simulator by Collabora Ltd.",
+        name: "Created using CARLAFox\nby Collabora Ltd.",
         metricsCollector: args.metricsCollector,
         // Use blank url params so the data source is set in the url
         urlParams: {},
@@ -52,7 +52,7 @@ class SampleCarlafoxDataSourceFactory implements IDataSourceFactory {
         isSampleDataSource: true,
         metricsCollector: args.metricsCollector,
         seekToTime: getSeekToTime(),
-        name: "Created using the CARLA simulator by Collabora Ltd.",
+        name: "Created using the CARLAFox\nby Collabora Ltd.",
         // Use blank url params so the data source is set in the url
         urlParams: {},
       });

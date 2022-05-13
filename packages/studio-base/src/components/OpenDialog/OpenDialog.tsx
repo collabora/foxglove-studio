@@ -118,8 +118,8 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
   return (
     <Dialog
       hidden={false}
-      maxWidth={800}
-      minWidth={800}
+      maxWidth={925}
+      minWidth={925}
       modalProps={{
         layerProps: {
           // We enable event bubbling so a user can drag&drop files or folders onto the app even when
@@ -131,6 +131,7 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
           main: {
             display: "flex",
             flexDirection: "column",
+            background: 'center / contain no-repeat url("Background_03.jpg")',
           },
           scrollableContent: {
             display: "flex",
@@ -143,6 +144,9 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
         showCloseButton: true,
         title: view.title,
         styles: {
+          title: {
+            "text-align": "center",
+          },
           content: {
             overflow: "hidden",
             // Keep a consistent height for the dialog so changing views does not change the height
@@ -157,6 +161,7 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
             flex: 1,
             display: "flex",
             flexDirection: "column",
+            padding: 0,
 
             "@media (min-height: 552px)": { overflow: "hidden" },
           },
@@ -174,6 +179,27 @@ export default function OpenDialog(props: OpenDialogProps): JSX.Element {
       <Stack flexGrow={1} height="100%" justifyContent="space-between" spacing={2}>
         {view.component}
       </Stack>
+      <a
+        style={{
+          position: "absolute",
+          right: "17px",
+          bottom: "5px",
+          width: "150px",
+          height: "30px",
+        }}
+        href="https://www.collabora.com"
+      ></a>
+      <a
+        style={{
+          position: "absolute",
+          left: "8px",
+          bottom: "8px",
+          width: "150px",
+          height: "25px",
+          background: "center / contain no-repeat url(foxglove-logo.svg)",
+        }}
+        href="https://foxglove.dev"
+      ></a>
     </Dialog>
   );
 }
